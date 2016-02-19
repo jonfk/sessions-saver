@@ -2,7 +2,7 @@
 
 const SESSION_ALARM = 'session-saver';
 
-var pollingPeriodInMinutes = 1;
+var pollingPeriodInMinutes = 15;
 
 /**
  * @param {Tab} tab - Gives the state of the tab that was updated.
