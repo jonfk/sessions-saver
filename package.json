@@ -1,0 +1,10 @@
+{
+  "name": "session-saver",
+  "version": "1.0.0",
+  "description": "chrome extension to save your sessions",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jonathan Fok kan",
+  "license": "MIT",
+}
