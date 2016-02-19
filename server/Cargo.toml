@@ -1,0 +1,12 @@
+[package]
+name = "server"
+version = "0.1.0"
+authors = ["Jonathan Fok kan <jfokkan@gmail.com>"]
+
+[dependencies]
+iron = "*"
+router = "*"
+
+serde = "*"
+serde_json = "*"
+serde_macros = "*"
