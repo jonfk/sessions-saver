@@ -18,6 +18,9 @@
 
   "permissions": [
     "activeTab",
-    "tabs"
+    "tabs",
+    "alarms",
+    "system.cpu",
+    "system.memory"
   ]
 }
