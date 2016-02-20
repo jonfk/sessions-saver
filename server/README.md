@@ -20,3 +20,12 @@ $ brew install openssl
 $ export OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include
 $ cargo build
 ```
+
+## Database
+
+I am using the postgres docker image for the database.
+
+For database setup and communication I am using [diesel](https://github.com/sgrif/diesel).
+```bash
+$ cargo install diesel_cli
+```
