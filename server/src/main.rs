@@ -1,12 +1,20 @@
-
 #![feature(custom_derive, plugin)]
 #![plugin(serde_macros)]
 
+extern crate dotenv;
 extern crate iron;
 extern crate router;
 
 extern crate serde;
 extern crate serde_json;
+
+extern crate iron_postgres_middleware as pg_middleware;
+use pg_middleware::{PostgresMiddleware, PostgresReqExt};
+
+mod store;
+
+use dotenv::dotenv;
+use std::env;
 
 use iron::prelude::*;
 use iron::status;
@@ -21,7 +29,12 @@ struct Greeting {
     msg: String
 }
 
+const DATABASE_URL: &'static str = "DATABASE_URL";
+
 fn main() {
+    dotenv().ok();
+
+
     let greeting = Arc::new(Mutex::new(Greeting { msg: "Hello, World".to_string() }));
     let greeting_clone = greeting.clone();
 
@@ -30,7 +43,20 @@ fn main() {
     router.get("/", move |r: &mut Request| hello_world(r, &greeting.lock().unwrap()));
     router.post("/set", move |r: &mut Request| set_greeting(r, &mut greeting_clone.lock().unwrap()));
 
-    Iron::new(router).http("localhost:3000").unwrap();
+    let mut c = Chain::new(router);
+
+    match env::var(DATABASE_URL) {
+        Ok(val) => {
+            let pg_middleware = PostgresMiddleware::new(&val).unwrap();
+            c.link_before(pg_middleware);
+        },
+        Err(e) => {
+            println!("DATABASE_URL env variable is not set");
+            return;
+        },
+    }
+
+    Iron::new(c).http("localhost:3000").unwrap();
     println!("On 3000");
 }
 

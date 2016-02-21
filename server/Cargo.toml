@@ -10,3 +10,8 @@ router = "*"
 serde = "*"
 serde_json = "*"
 serde_macros = "*"
+
+dotenv = "^0.8.0"
+dotenv_macros = "^0.8.0"
+
+iron-postgres-middleware = { git = "https://github.com/jonfk/iron-postgres-middleware.git" }
