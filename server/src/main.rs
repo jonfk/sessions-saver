@@ -1,6 +1,8 @@
 #![feature(custom_derive, plugin)]
 #![plugin(serde_macros)]
 
+extern crate crypto;
+
 extern crate dotenv;
 extern crate iron;
 extern crate router;
@@ -8,10 +10,16 @@ extern crate router;
 extern crate serde;
 extern crate serde_json;
 
+extern crate postgres;
+extern crate r2d2;
+extern crate r2d2_postgres;
 extern crate iron_postgres_middleware as pg_middleware;
 use pg_middleware::{PostgresMiddleware, PostgresReqExt};
+use r2d2::{Pool, PooledConnection};
+use r2d2_postgres::{PostgresConnectionManager};
 
 mod store;
+use store::users;
 
 use dotenv::dotenv;
 use std::env;
@@ -31,9 +39,11 @@ struct Greeting {
 
 const DATABASE_URL: &'static str = "DATABASE_URL";
 
+//pub type PostgresPool = Pool<PostgresConnectionManager>;
+pub type PostgresPooledConnection = PooledConnection<PostgresConnectionManager>;
+
 fn main() {
     dotenv().ok();
-
 
     let greeting = Arc::new(Mutex::new(Greeting { msg: "Hello, World".to_string() }));
     let greeting_clone = greeting.clone();
@@ -41,7 +51,8 @@ fn main() {
     let mut router = Router::new();
 
     router.get("/", move |r: &mut Request| hello_world(r, &greeting.lock().unwrap()));
-    router.post("/set", move |r: &mut Request| set_greeting(r, &mut greeting_clone.lock().unwrap()));
+    router.post("/signup", create_user);
+    router.post("/login", login);
 
     let mut c = Chain::new(router);
 
@@ -50,7 +61,7 @@ fn main() {
             let pg_middleware = PostgresMiddleware::new(&val).unwrap();
             c.link_before(pg_middleware);
         },
-        Err(e) => {
+        Err(_) => {
             println!("DATABASE_URL env variable is not set");
             return;
         },
@@ -65,11 +76,28 @@ fn hello_world(_: &mut Request, greeting: &Greeting) -> IronResult<Response> {
     Ok(Response::with((status::Ok, payload)))
 }
 
-// Receive a message by POST and play it back.
-fn set_greeting(request: &mut Request, greeting: &mut Greeting) -> IronResult<Response> {
+
+fn create_user(request: &mut Request) -> IronResult<Response> {
     let mut payload = String::new();
     request.body.read_to_string(&mut payload).unwrap();
-    *greeting = serde_json::from_str(&payload).unwrap();
-    let payload = serde_json::to_string(&greeting).unwrap();
-    Ok(Response::with((status::Ok, payload)))
+    let user: users::User = serde_json::from_str(&payload).unwrap();
+
+    let conn = request.db_conn();
+    let a = users::create_user(&conn, user.email, user.password).unwrap();
+
+    Ok(Response::with((status::Ok, "Account created")))
+}
+
+fn login(request: &mut Request) -> IronResult<Response> {
+    let mut payload = String::new();
+    request.body.read_to_string(&mut payload).unwrap();
+    let user: users::User = serde_json::from_str(&payload).unwrap();
+
+    let conn = request.db_conn();
+    if users::login(&conn, user.email, user.password) {
+        Ok(Response::with((status::Ok, "Login success")))
+    } else {
+        Ok(Response::with((status::Unauthorized, "Login failure")))
+    }
+
 }
