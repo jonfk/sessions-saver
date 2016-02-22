@@ -15,3 +15,8 @@ dotenv = "^0.8.0"
 dotenv_macros = "^0.8.0"
 
 iron-postgres-middleware = { git = "https://github.com/jonfk/iron-postgres-middleware.git" }
+postgres = "0.11"
+r2d2 = "0.6.3"
+r2d2_postgres = "0.10.0"
+
+rust-crypto = "^0.2"
