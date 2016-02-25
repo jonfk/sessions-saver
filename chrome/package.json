@@ -3,9 +3,17 @@
   "version": "1.0.0",
   "description": "chrome extension to save your sessions",
   "scripts": {
+    "build": "browserify background.js -o extension/background.js",
+    "clean": "rm extension/background.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "https://github.com/jonfk/sessions-saver",
   "author": "Jonathan Fok kan",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "superagent": "^1.7.2"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0"
+  }
 }

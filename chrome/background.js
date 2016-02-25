@@ -4,6 +4,8 @@ const SESSION_ALARM = 'session-saver';
 
 var pollingPeriodInMinutes = 15;
 
+var superagent = require('superagent');
+
 /**
  * @param {Tab} tab - Gives the state of the tab that was updated.
  *
@@ -11,6 +13,11 @@ var pollingPeriodInMinutes = 15;
  */
 function onTabCreated(tab) {
   console.log(tab);
+  superagent.get('https://www.google.ca')
+            .end(function(err, res) {
+              console.log(res);
+            });
+
 }
 
 /**
