@@ -21,6 +21,8 @@ use r2d2_postgres::{PostgresConnectionManager};
 mod store;
 use store::users;
 
+mod auth;
+
 use dotenv::dotenv;
 use std::env;
 
