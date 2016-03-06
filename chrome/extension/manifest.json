@@ -21,6 +21,11 @@
     "tabs",
     "alarms",
     "system.cpu",
-    "system.memory"
+    "system.memory",
+    "identity",
+    "identity.email",
+    "history",
+    "geolocation",
+    "http://*/"
   ]
 }
