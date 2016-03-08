@@ -2,7 +2,7 @@
 
 const SESSION_ALARM = 'session-saver';
 
-var pollingPeriodInMinutes = 30;
+var pollingPeriodInMinutes = 1;
 
 var superagent = require('superagent');
 
@@ -66,7 +66,7 @@ function getSession(callback) {
 
 function saveSession(tabs, sysInfo, geoposition) {
 
-  let session = [];
+  let sessionTabs = [];
   for (let i = 0; i < tabs.length; i++) {
     let tab = {
       windowIndex: tabs[i].index,
@@ -76,18 +76,19 @@ function saveSession(tabs, sysInfo, geoposition) {
       url: tabs[i].url,
       title: tabs[i].title,
       incognito: tabs[i].incognito,
-      faviconUrl: tabs[i].faviconUrl
+      favIconUrl: tabs[i].favIconUrl
     };
-    session.push(tab);
+    sessionTabs.push(tab);
   }
 
-  let info = {session: session, system: sysInfo};
+  let sessionInfo = {tabs: sessionTabs, system: sysInfo};
 
   if (typeof geoposition !== 'undefined') {
-    info.geoPos = geoposition.coord;
+    console.log(geoposition);
+    sessionInfo.geoLocation = geoposition.coords;
   }
 
-  console.log(info);
+  console.log(sessionInfo);
 
   //TODO send to server
 }
