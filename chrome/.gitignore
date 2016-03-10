@@ -1,1 +1,3 @@
 extension/background.js
+extension/main.js
+extension/login/login.js

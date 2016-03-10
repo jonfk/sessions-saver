@@ -3,17 +3,24 @@
   "version": "1.0.0",
   "description": "chrome extension to save your sessions",
   "scripts": {
-    "build": "browserify background.js -o extension/background.js",
-    "clean": "rm extension/background.js",
+    "build": "npm run build-background && npm run build-main && npm run build-login",
+    "build-main": "browserify main.js -o extension/main.js",
+    "build-background": "browserify background.js -o extension/background.js",
+    "build-login": "browserify -t [ babelify --presets [ react ] ] login.jsx -o extension/login/login.js",
+    "clean": "rm extension/background.js extension/main.js extension/login/login.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "https://github.com/jonfk/sessions-saver",
   "author": "Jonathan Fok kan",
   "license": "MIT",
   "dependencies": {
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
     "superagent": "^1.7.2"
   },
   "devDependencies": {
-    "browserify": "^13.0.0"
+    "browserify": "^13.0.0",
+    "babel-preset-react": "^6.5.0",
+    "babelify": "^7.2.0"
   }
 }
