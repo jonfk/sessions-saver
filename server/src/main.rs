@@ -44,6 +44,7 @@ struct Greeting {
 }
 
 const DATABASE_URL: &'static str = "DATABASE_URL";
+const SERVER_ADDR: &'static str = "SESSION_SAVER_ADDR";
 
 //pub type PostgresPool = Pool<PostgresConnectionManager>;
 pub type PostgresPooledConnection = PooledConnection<PostgresConnectionManager>;
@@ -73,8 +74,17 @@ fn main() {
         },
     }
 
-    Iron::new(c).http("localhost:3000").unwrap();
-    println!("On 3000");
+    match env::var(SERVER_ADDR) {
+        Ok(val) => {
+            let addr: &str = &val;
+            Iron::new(c).http(addr).unwrap();
+            println!("On {}", addr);
+        },
+        Err(_) => {
+            println!("{} env variable is not set", SERVER_ADDR);
+            return;
+        },
+    }
 }
 
 fn hello_world(_: &mut Request, greeting: &Greeting) -> IronResult<Response> {
