@@ -22,6 +22,10 @@ mod store;
 use store::users;
 
 mod auth;
+extern crate jsonwebtoken as jwt;
+extern crate rustc_serialize;
+
+mod errors;
 
 use dotenv::dotenv;
 use std::env;
@@ -96,10 +100,17 @@ fn login(request: &mut Request) -> IronResult<Response> {
     let user: users::User = serde_json::from_str(&payload).unwrap();
 
     let conn = request.db_conn();
-    if users::login(&conn, user.email, user.password) {
-        Ok(Response::with((status::Ok, "Login success")))
-    } else {
-        Ok(Response::with((status::Unauthorized, "Login failure")))
+    match auth::login(&conn, user.email, user.password) {
+        Ok(login) => {
+            let result: String = serde_json::to_string(&login).unwrap();
+            Ok(Response::with((status::Ok, result)))
+        },
+        Err(err) => {
+            let result: String = serde_json::to_string(&auth::Login{success: false, token:"".to_string()}).unwrap();
+            // TODO log err
+            Ok(Response::with((status::Ok, result)))
+        }
+
     }
 
 }
