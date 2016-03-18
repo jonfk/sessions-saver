@@ -17,7 +17,7 @@ pub fn hash_password(password_unhashed: String) -> io::Result<String> {
 }
 
 pub fn verify_password(password_hashed: String, to_check: String) -> Result<bool, errors::Error> {
-    match scrypt_check(&password_hashed, &to_check){
+    match scrypt_check(&to_check, &password_hashed){
         Ok(res) => Ok(res),
         Err(err) => Err(errors::Error::RustCryptoErr(err)),
     }
@@ -35,7 +35,7 @@ pub fn login(conn: &::PostgresPooledConnection, email: String, password_unchecke
     let user = try!(store::users::get_user_by_email(conn, email));
 
     if try!(verify_password(user.password, password_unchecked)) {
-        let token = try!(encode_jwt(user.id));
+        let token = try!(encode_jwt(user.id.unwrap()));
         Ok(Login{success:true, token:token})
     } else {
         Ok(Login{success: false, token:"".to_string()})

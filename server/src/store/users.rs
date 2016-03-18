@@ -10,7 +10,7 @@ use errors;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
-    pub id: i64,
+    pub id: Option<i64>,
     pub email: String,
     pub password: String
 }
@@ -36,7 +36,7 @@ pub fn get_user_by_email(conn: &::PostgresPooledConnection, email: String) -> Re
         let email: String = rows.get(0).get(1);
         let password_hashed: String = rows.get(0).get(2);
         Ok(User{
-            id: id,
+            id: Some(id),
             email: email,
             password: password_hashed,
         })
