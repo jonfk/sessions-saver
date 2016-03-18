@@ -3,9 +3,13 @@ name = "server"
 version = "0.1.0"
 authors = ["Jonathan Fok kan <jfokkan@gmail.com>"]
 
+[features]
+it_test = [] # used for it tests
+
 [dependencies]
 iron = "*"
 router = "*"
+hyper = "*"
 
 serde = "*"
 serde_json = "*"

@@ -28,7 +28,16 @@ I am using the postgres docker image for the database.
 For database setup and communication I am using [diesel](https://github.com/sgrif/diesel).
 ```bash
 $ cargo install diesel_cli
+# setup database
+$ diesel migration run
 ```
 NOTE: I am giving up on diesel for now since it's not compiling on my version of rust nightly (rustc 1.8.0-nightly (57c357d89 2016-02-16))
 
 I will keep using the diesel cli for database migrations though. It's a pretty decent tool.
+
+## Testing
+
+```bash
+$ cargo test
+$ cargo test --features it_test
+```
